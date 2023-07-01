@@ -1,12 +1,39 @@
 #!/bin/bash
+source ~/linux3/bash/reportfunctions.sh
+errormessage "Script ran at `date`"
+while [ $# -gt 0 ]; do
+    case $1 in
+        -h | --help )
+       	    echo "this is help section"
+            shift
+            ;;
+        -v | --verbose)
+            shift
+            verbose1="true"
+            echo "verbose is set to true, user will get full info."
+            ;;
+        -system | --system)
+            computerreport
+            osreport
+            cpureport
+            ramreport
+            videoreport
+            exit
+            ;;
+        -disk  | --disk)
+            diskreport
+            exit
+            ;;
+        -network | --network)
+            networkreport
+            exit
+            ;;
+        * )
+            errormessage "$1 not a recognized a valid option"
+    esac
+    shift
+done
+if [ $verbose1 -eq "true" ]; then
+    errormessage "verbose is enabled."
+fi
 
-fqdn=$(hostname --fqdn)
-os_info=$(hostnamectl | awk '/Operating System/ {print $3,$4,$5,$6,$7,$8,$9}')
-ip_addresses=$(hostname -I)
-root_space=$(df -h --output=avail /| grep " ")
-
-# Print the information
-echo "FQDN: $fqdn"
-echo "OS: $os_info"
-echo "IP Addresses: $ip_addresses"
-echo "Avail Space in Root FS: $root_space"
